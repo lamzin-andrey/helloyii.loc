@@ -11,6 +11,8 @@
  * @property string $phone
  * @property integer $delta
  */
+//use app\components\behavior\IncrementDeltaBehavior;
+Yii::import('application.components.behavior.*');
 class User extends CActiveRecord
 {
 	/**
@@ -38,7 +40,15 @@ class User extends CActiveRecord
 			array('id, username, password, email, phone, delta', 'safe', 'on'=>'search'),
 		);
 	}
-
+	public function behaviors()
+	{
+		return array(
+			'afterSave' => array(
+				'class' => 'IncrementDeltaBehavior',
+				'model' => $this
+			),
+		);
+	}
 	/**
 	 * @return array relational rules.
 	 */

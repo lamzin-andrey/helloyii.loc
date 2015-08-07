@@ -37,7 +37,7 @@ class UserController extends Controller
 			),*/
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('admin','delete','index','view','create','update'),
-				'users'=>array('andrey_lamzin2'),
+				'users'=>array('andrey_lamzin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -88,13 +88,19 @@ class UserController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
+		$old_hash = $model->password;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['User']))
 		{
-			$model->attributes=$_POST['User'];
+			$model->attributes = $_POST['User'];
+			if (trim($_POST['User']['password'])) {
+				$model->password = CPasswordHelper::hashPassword(trim($_POST['User']['password']));
+			} else {
+				$model->password = $old_hash;
+			}
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}
